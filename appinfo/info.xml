@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <info>
 	<id>files_eostrashbin</id>
-	<name>Deleted files</name>
+	<name>EOS Trashbin</name>
 	<description>
 		This application enables EOS trashbin manipulation.
 	</description>
