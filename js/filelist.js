@@ -27,7 +27,7 @@
 	}
 
 	/**
-	 * @class OCA.Trashbin.FileList
+	 * @class OCA.EosTrashbin.FileList
 	 * @augments OCA.Files.FileList
 	 * @classdesc List of deleted files
 	 *
@@ -39,7 +39,7 @@
 		this.initialize($el, options);
 	};
 	FileList.prototype = _.extend({}, OCA.Files.FileList.prototype,
-		/** @lends OCA.Trashbin.FileList.prototype */ {
+		/** @lends OCA.EosTrashbin.FileList.prototype */ {
 		id: 'eostrashbin',
 		appName: t('files_eostrashbin', 'Deleted files'),
 
@@ -54,7 +54,7 @@
 			// Why after adding our view owncloud calls the sharing module and display share info
 			// after opening the side view ?????
 			if (this._detailsView) {
-				this._detailsView.addDetailView(new OCA.Trashbin.RestorePathView());
+				this._detailsView.addDetailView(new OCA.EosTrashbin.RestorePathView());
 			}
 
 			this.setSort('mtime', 'desc');
@@ -71,7 +71,7 @@
 				return parts;
 			};
 
-			OC.Plugins.attach('OCA.Trashbin.FileList', this);
+			OC.Plugins.attach('OCA.EosTrashbin.FileList', this);
 			return result;
 		},
 
@@ -376,6 +376,6 @@
 
 	});
 
-	OCA.Trashbin.FileList = FileList;
+	OCA.EosTrashbin.FileList = FileList;
 })();
 

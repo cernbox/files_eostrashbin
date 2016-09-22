@@ -9,13 +9,13 @@
  */
 
 /**
- * @namespace OCA.Trashbin
+ * @namespace OCA.EosTrashbin
  */
-OCA.Trashbin = {};
+OCA.EosTrashbin = {};
 /**
- * @namespace OCA.Trashbin.App
+ * @namespace OCA.EosTrashbin.App
  */
-OCA.Trashbin.App = {
+OCA.EosTrashbin.App = {
 	_initialized: false,
 
 	initialize: function($el) {
@@ -24,7 +24,7 @@ OCA.Trashbin.App = {
 		}
 		this._initialized = true;
 		var urlParams = OC.Util.History.parseUrlQuery();
-		this.fileList = new OCA.Trashbin.FileList(
+		this.fileList = new OCA.EosTrashbin.FileList(
 			$('#app-content-eostrashbin'), {
 				scrollContainer: $('#app-content'),
 				fileActions: this._createFileActions(),
@@ -103,7 +103,7 @@ OCA.Trashbin.App = {
 
 $(document).ready(function() {
 	$('#app-content-eostrashbin').one('show', function() {
-		var App = OCA.Trashbin.App;
+		var App = OCA.EosTrashbin.App;
 		App.initialize($('#app-content-eostrashbin'));
 		// force breadcrumb init
 		// App.fileList.changeDirectory(App.fileList.getCurrentDirectory(), false, true);

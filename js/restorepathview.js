@@ -43,7 +43,6 @@
 			if(!this.model)
 				return null;
 			var eospathT = this.model.get('data-eos-restore-path');
-			alert(eospathT);
 
 			if (!eospathT || typeof eospathT == 'undefined')
 			{
@@ -77,5 +76,5 @@
 
 	});
 
-	OCA.Trashbin.RestorePathView = RestorePathView;
+	OCA.EosTrashbin.RestorePathView = RestorePathView;
 })();
