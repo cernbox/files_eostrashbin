@@ -51,8 +51,8 @@
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
 
 
-			// Why after adding our view owncloud class sharing the sharing module after
-			// opening the side view ?????
+			// Why after adding our view owncloud calls the sharing module and display share info
+			// after opening the side view ?????
 			if (this._detailsView) {
 				this._detailsView.addDetailView(new OCA.Trashbin.RestorePathView());
 			}
