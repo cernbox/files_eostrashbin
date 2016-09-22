@@ -51,10 +51,12 @@
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
 
 
-			// remove _detailView so we do not use share side view and only ours
+			// Why after adding our view owncloud class sharing the sharing module after
+			// opening the side view ?????
 			if (this._detailsView) {
 				this._detailsView.addDetailView(new OCA.Trashbin.RestorePathView());
 			}
+
 			this.setSort('mtime', 'desc');
 			/**
 			 * Override crumb making to add "Deleted Files" entry
