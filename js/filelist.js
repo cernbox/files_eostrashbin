@@ -40,7 +40,13 @@
 	};
 	FileList.prototype = _.extend({}, OCA.Files.FileList.prototype,
 		/** @lends OCA.EosTrashbin.FileList.prototype */ {
-		id: 'eostrashbin',
+			// if we set the id to 'eostrashbin' then the sharing view will be loaded
+			// into the trashbin view and we don't want that.
+			// the sharing application has hardcoded a list of fileList ids
+			// to avoid adding the sharing view to our view.
+			// See https://github.com/owncloud/core/issues/26177
+			// as trashbin is one of the hardcoded ids, we use it.
+		id: 'trashbin', // we need to put trashbin to avoi
 		appName: t('files_eostrashbin', 'Deleted files'),
 
 		/**
