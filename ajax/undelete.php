@@ -55,7 +55,7 @@ foreach ($filesToBeRestored as $file) {
 		$fileName = implode(".",  $parts);
 		$errorCode = $instanceManager->restoreDeletedFile($username, $restoreKey);
 		if($errorCode === 0) {
-			$success[$i]['filename']  = $fileName;
+			$success[$i]['filename']  = $file;
 			$success[$i]['timestamp'] = time();
 	 	} else {
 	 		if($errorCode === 17) {
