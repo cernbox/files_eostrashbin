@@ -96,7 +96,7 @@ $(document).ready(function() {
 		var App = OCA.EosTrashbin.App;
 		App.initialize($('#app-content-eostrashbin'));
 		// force breadcrumb init
-		// App.fileList.changeDirectory(App.fileList.getCurrentDirectory(), false, true);
+		App.fileList.changeDirectory(App.fileList.getCurrentDirectory(), false, true);
 	});
 });
 
