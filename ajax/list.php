@@ -14,9 +14,11 @@ $data = array();
 try {
 	$deletedFiles = $instanceManager->getDeletedFiles($username);
 	$deletedFiles = \OCA\Files_EosTrashbin\Helper::sortFiles($deletedFiles, $sortAttribute, $sortDirection);
-} catch (Exception $e) {
-	header("HTTP/1.0 404 Not Found");
-	exit();
+} catch (\OCA\Files_EosTrashbin\RecycleSizeLimitException $e) {
+	OCP\JSON::error(array( 'data' => array( 'message' => $e->getMessage() )));
+	return;
+} catch (\Exception $e) {
+	$e->getMessage();
 }
 
 $encodedDir = \OCP\Util::encodePath($dir);
