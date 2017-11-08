@@ -54,15 +54,18 @@ foreach ($filesToBeRestored as $file) {
 			$success[$i]['timestamp'] = $file->getDeletionMTime();
 		} else {
 			$fileName = basename($file->getOriginalPath());
-			if($errorCode === 17) {
+			switch ($errorCode) {
+			case 17:
 				// file/folder already exists
 				$error[] = $fileName . " (folder/file already exists)";
-			} else {
+				break;
+			default:
 				// whatever other error
 				$dirName = dirname($file->getOriginalPath());
 				// remove files/ prefix
 				$dirName = substr($dirName, strlen('files/'));
 				$error[] = $fileName . " (you need to create the parent folder: $dirName)";
+				break;
 			}
 		}
 		$i++;
