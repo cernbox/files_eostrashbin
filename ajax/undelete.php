@@ -55,16 +55,23 @@ foreach ($filesToBeRestored as $file) {
 		} else {
 			$fileName = basename($file->getOriginalPath());
 			switch ($errorCode) {
+			case 1:
+				$error[] = $fileName . " (to recycle this file you have to have the role of the file owner)";
+				break;
+			case 2:
+				$error[] = $fileName . " (you have to recreate the restore directory)";
+				break;
+			case 5:
+				$error[] = $fileName . " (unable to stat path to be recycled. Check folder/tree " . dirname($file->getOriginalPath()) . ")";
+				break;
 			case 17:
-				// file/folder already exists
-				$error[] = $fileName . " (folder/file already exists)";
+				$error[] = $fileName . " (the original path is already existing)";
+				break;
+			case 22:
+				$error[] = $fileName . " (referenced object cannot be recycled)";
 				break;
 			default:
-				// whatever other error
-				$dirName = dirname($file->getOriginalPath());
-				// remove files/ prefix
-				$dirName = substr($dirName, strlen('files/'));
-				$error[] = $fileName . " (you need to create the parent folder: $dirName)";
+				$error[] = $fileName . " (unknown error with file " . $file->getOriginalPath() . ")";
 				break;
 			}
 		}
