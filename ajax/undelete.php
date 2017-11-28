@@ -34,8 +34,12 @@ foreach ($filesToBeRestored as $file) {
 			$success[$i]['timestamp'] = time();
 	 	} else {
 	 		if($errorCode === 17) {
-	 			// file/folder already exists
+				// file/folder already exists
 				$error[] = $fileName . " (folder/file already exists)";
+			} else if (is_array($errorCode)) {
+				list(, $restorePath) = $errorCode;
+				$restorePath = substr($restorePath, strlen('files/'));
+				$error[] = $fileName . " (you need to create the parent path: $restorePath)";
 			} else {
 				// whatever other error
 				// TODO(labkode) add parent folder like in the case below ?
