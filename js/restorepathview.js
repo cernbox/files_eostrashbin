@@ -1,6 +1,7 @@
 (function() {
-	var TEMPLATE = "<div><p>Original EOS Location</p></div>" +
-		"<div><input readonly type='text' value='{{eospathText}}'></input></div>";
+	var TEMPLATE =
+		"<div><p>Restore location</p></div>" +
+		"<div><input readonly type='text' style='width:100%' value='{{eospathText}}'></input></div>";
 
 	var RestorePathView = OC.Backbone.View.extend({
 	/** @type {string} **/
