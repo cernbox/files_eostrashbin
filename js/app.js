@@ -97,6 +97,8 @@ $(document).ready(function() {
 		App.initialize($('#app-content-eostrashbin'));
 		// force breadcrumb init
 		App.fileList.changeDirectory(App.fileList.getCurrentDirectory(), false, true);
+		// hide purge action
+		$("#app-content-eostrashbin").find(".delete-selected").remove();
 	});
 });
 

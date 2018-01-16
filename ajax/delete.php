@@ -7,7 +7,9 @@ $instanceManager = \OC::$server->getCernBoxEosInstanceManager();
 
 $folder = isset($_POST['dir']) ? $_POST['dir'] : '/';
 
+OCP\JSON::error(array("data" => array("message" => "Purging files is not allowed", "success" => array(), "error" => array())));
 // "empty trash" command
+/*
 if (isset($_POST['allfiles']) && (string)$_POST['allfiles'] === 'true'){
 	$purged = $instanceManager->purgeAllDeletedFiles($username);
 	if($purged) {
@@ -19,3 +21,4 @@ if (isset($_POST['allfiles']) && (string)$_POST['allfiles'] === 'true'){
 else {
 		OCP\JSON::error(array("data" => array("message" => "Single file purging is not allowed", "success" => array(), "error" => array())));
 }
+*/
