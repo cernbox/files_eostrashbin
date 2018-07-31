@@ -23,25 +23,19 @@
 		<tr>
 			<th id='headerName' class="hidden column-name">
 				<div id="headerName-container">
-					<input type="checkbox" id="select_all_trash" class="select-all checkbox"/>
-					<label for="select_all_trash">
-						<span class="hidden-visually"><?php p($l->t('Select all'))?></span>
-					</label>
 					<a class="name sort columntitle" data-sort="name"><span><?php p($l->t( 'Name' )); ?></span><span class="sort-indicator"></span></a>
-					<span id="selectedActionsList" class='selectedActions'>
-						<a href="" class="undelete">
-							<span class="icon icon-history"></span>
-							<span><?php p($l->t('Restore'))?></span>
-						</a>
-					</span>
+				</div>
+			</th>
+			<th id='headerName' class="hidden column-name">
+				<div id="headerName-container">
+					<a class="size sort columntitle" data-sort="size"><span><?php p($l->t( 'Size' )); ?></span><span class="sort-indicator"></span></a>
 				</div>
 			</th>
 			<th id="headerDate" class="hidden column-mtime">
 				<a id="modified" class="columntitle" data-sort="mtime"><span><?php p($l->t( 'Deleted' )); ?></span><span class="sort-indicator"></span></a>
 				<span class="selectedActions">
-					<a href="" class="delete-selected">
-						<span><?php p($l->t('Delete'))?></span>
-						<span class="icon icon-delete"></span>
+					<a href="" class="">
+						<span></span>
 					</a>
 				</span>
 			</th>
