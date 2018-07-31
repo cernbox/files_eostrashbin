@@ -91,7 +91,7 @@
 		_createRow: function(fileData) {
 			// FIXME: MEGAHACK until we find a better solution
 			var tr = OCA.Files.FileList.prototype._createRow.apply(this, arguments);
-			tr.find('td.filesize').remove();
+			//tr.find('td.filesize').remove();
 
 			// pass eos keys to the client
 			tr.attr('data-eos-restore-path', fileData['eos.restore-path']);
@@ -139,7 +139,7 @@
 				fileInfo.displayName = getDeletedFileName(fileInfo.name);
 			}
 			// no size available
-			delete fileInfo.size;
+			//delete fileInfo.size;
 			fileInfo['data-eos-restore-path'] = $el.attr('data-eos-restore-path');
 			return fileInfo;
 		},
