@@ -294,7 +294,7 @@
 		},
 
 		isSelectedDeletable: function() {
-			return true;
+			return false;
 		},
 
 		/**
