@@ -1,5 +1,14 @@
 <?php /** @var $l OC_L10N */ ?>
 <div id="controls">
+	<div class="breadcrumb_trash">
+		<div class="crumb svg" data-dir="/"><a href="#"><img class="svg" src="/core/img/places/home.svg" alt="Home"></a></div>
+		<div class="crumb"><a href="#">Deleted files</a></div>
+		<div class="crumb last"><a href="#" class="cb_cal_text cb_cal_button">Today</a></div>
+		<div class="actions creatable datepicker_wrapper">
+			<input type="text" id="cb_cal_input1" class="cb_cal_form"><input type="text" id="cb_cal_input2" class="cb_cal_form">
+			<a href="#" class="button calendar cb_cal_button"><span class="icon icon-calendar-dark"></span><span class="hidden-visually">Calendar</span></a>
+		</div>
+	</div>
 	<div id="file_action_panel"></div>
 </div>
 <div id='notification'></div>

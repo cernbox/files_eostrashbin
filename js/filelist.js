@@ -1,378 +1,376 @@
 (function() {
-	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
+    var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
 
-	/**
-	 * Convert a file name in the format filename.d12345 to the real file name.
-	 * This will use basename.
-	 * The name will not be changed if it has no ".d12345" suffix.
-	 * @param {String} name file name
-	 * @return {String} converted file name
-	 */
-	function getDeletedFileName(name) {
-		name = OC.basename(name);
-		var match = DELETED_REGEXP.exec(name);
-		if (match && match.length > 1) {
-			name = match[1];
-		}
-		return name;
-	}
+    /**
+     * Convert a file name in the format filename.d12345 to the real file name.
+     * This will use basename.
+     * The name will not be changed if it has no ".d12345" suffix.
+     * @param {String} name file name
+     * @return {String} converted file name
+     */
+    function getDeletedFileName(name) {
+        name = OC.basename(name);
+        var match = DELETED_REGEXP.exec(name);
+        if (match && match.length > 1) {
+            name = match[1];
+        }
+        return name;
+    }
 
-	/**
-	 * @class OCA.EosTrashbin.FileList
-	 * @augments OCA.Files.FileList
-	 * @classdesc List of deleted files
-	 *
-	 * @param $el container element with existing markup for the #controls
-	 * and a table
-	 * @param [options] map of options
-	 */
-	var FileList = function($el, options) {
-		this.initialize($el, options);
-	};
-	FileList.prototype = _.extend({}, OCA.Files.FileList.prototype,
-		/** @lends OCA.EosTrashbin.FileList.prototype */ {
-			// if we set the id to 'eostrashbin' then the sharing view will be loaded
-			// into the trashbin view and we don't want that.
-			// the sharing application has hardcoded a list of fileList ids
-			// to avoid adding the sharing view to our view.
-			// See https://github.com/owncloud/core/issues/26177
-			// as trashbin is one of the hardcoded ids, we use it.
-		id: 'trashbin', // we need to put trashbin to avoi
-		appName: t('files_eostrashbin', 'Deleted files'),
+    /**
+     * @class OCA.EosTrashbin.FileList
+     * @augments OCA.Files.FileList
+     * @classdesc List of deleted files
+     *
+     * @param $el container element with existing markup for the #controls
+     * and a table
+     * @param [options] map of options
+     */
+    var FileList = function($el, options) {
+        this.initialize($el, options);
+    };
+    FileList.prototype = _.extend({}, OCA.Files.FileList.prototype,
+        /** @lends OCA.EosTrashbin.FileList.prototype */
+        {
+            // if we set the id to 'eostrashbin' then the sharing view will be loaded
+            // into the trashbin view and we don't want that.
+            // the sharing application has hardcoded a list of fileList ids
+            // to avoid adding the sharing view to our view.
+            // See https://github.com/owncloud/core/issues/26177
+            // as trashbin is one of the hardcoded ids, we use it.
+            id: 'trashbin', // we need to put trashbin to avoi
+            appName: t('files_eostrashbin', 'Deleted files'),
 
-		/**
-		 * @private
-		 */
-		initialize: function() {
-			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
-			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
+            /**
+             * @private
+             */
+            initialize: function() {
+                var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
+                this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
 
 
-			// Why after adding our view owncloud calls the sharing module and display share info
-			// after opening the side view ?????
-			if (this._detailsView) {
-				this._detailsView.addDetailView(new OCA.EosTrashbin.RestorePathView());
-			}
+                // Why after adding our view owncloud calls the sharing module and display share info
+                // after opening the side view ?????
+                if (this._detailsView) {
+                    this._detailsView.addDetailView(new OCA.EosTrashbin.RestorePathView());
+                }
 
-			this.setSort('mtime', 'desc');
-			/**
-			 * Override crumb making to add "Deleted Files" entry
-			 * and convert files with ".d" extensions to a more
-			 * user friendly name.
-			 */
-			this.breadcrumb._makeCrumbs = function() {
-				var parts = OCA.Files.BreadCrumb.prototype._makeCrumbs.apply(this, arguments);
-				for (var i = 1; i < parts.length; i++) {
-					parts[i].name = getDeletedFileName(parts[i].name);
-				}
-				return parts;
-			};
+                this.setSort('mtime', 'desc');
+                /**
+                 * Override crumb making to add "Deleted Files" entry
+                 * and convert files with ".d" extensions to a more
+                 * user friendly name.
+                 */
+                this.breadcrumb._makeCrumbs = function() {
+                    var parts = OCA.Files.BreadCrumb.prototype._makeCrumbs.apply(this, arguments);
 
-			OC.Plugins.attach('OCA.EosTrashbin.FileList', this);
-			return result;
-		},
+                    for (var i = 1; i < parts.length; i++) {
+                        parts[i].name = getDeletedFileName(parts[i].name);
+                    }
+                    return parts;
+                };
 
-		/**
-		 * Override to only return read permissions
-		 */
-		getDirectoryPermissions: function() {
-			return OC.PERMISSION_READ | OC.PERMISSION_DELETE;
-		},
+                OC.Plugins.attach('OCA.EosTrashbin.FileList', this);
+                return result;
+            },
 
-		_setCurrentDir: function(targetDir) {
-			OCA.Files.FileList.prototype._setCurrentDir.apply(this, arguments);
+            /**
+             * Override to only return read permissions
+             */
+            getDirectoryPermissions: function() {
+                return OC.PERMISSION_READ | OC.PERMISSION_DELETE;
+            },
 
-			var baseDir = OC.basename(targetDir);
-			if (baseDir !== '') {
-				this.setPageTitle(getDeletedFileName(baseDir));
-			}
-		},
+            _setCurrentDir: function(targetDir) {
+                OCA.Files.FileList.prototype._setCurrentDir.apply(this, arguments);
 
-		_createRow: function(fileData) {
-			// FIXME: MEGAHACK until we find a better solution
-			var tr = OCA.Files.FileList.prototype._createRow.apply(this, arguments);
-			//tr.find('td.filesize').remove();
+                var baseDir = OC.basename(targetDir);
+                if (baseDir !== '') {
+                    this.setPageTitle(getDeletedFileName(baseDir));
+                }
+            },
 
-			// pass eos keys to the client
-			tr.attr('data-eos-restore-path', fileData['eos.restore-path']);
-			tr.attr('data-eos-restore-key', fileData['eos.restore-key']);
-			return tr;
-		},
+            _createRow: function(fileData) {
+                // FIXME: MEGAHACK until we find a better solution
+                var tr = OCA.Files.FileList.prototype._createRow.apply(this, arguments);
+                //tr.find('td.filesize').remove();
 
-		_renderRow: function(fileData, options) {
-			options = options || {};
-			// make a copy to avoid changing original object
-			fileData = _.extend({}, fileData);
-			var dir = this.getCurrentDirectory();
-			var dirListing = dir !== '' && dir !== '/';
-			// show deleted time as mtime
-			if (fileData.mtime) {
-				fileData.mtime = parseInt(fileData.mtime, 10);
-			}
-			if (!dirListing) {
-				fileData.displayName = fileData.name;
-				//fileData.name = fileData.name + '.d' + Math.floor(fileData.mtime / 1000);
-				fileData.name = fileData.name + '.' + fileData['eos.restore-key'];
-			}
-			return OCA.Files.FileList.prototype._renderRow.call(this, fileData, options);
-		},
+                // pass eos keys to the client
+                tr.attr('data-eos-restore-path', fileData['eos.restore-path']);
+                tr.attr('data-eos-restore-key', fileData['eos.restore-key']);
+                return tr;
+            },
 
-		getAjaxUrl: function(action, params) {
-			var q = '';
-			if (params) {
-				q = '?' + OC.buildQueryString(params);
-			}
-			return OC.filePath('files_eostrashbin', 'ajax', action + '.php') + q;
-		},
+            _renderRow: function(fileData, options) {
+                options = options || {};
+                // make a copy to avoid changing original object
+                fileData = _.extend({}, fileData);
+                var dir = this.getCurrentDirectory();
+                var dirListing = dir !== '' && dir !== '/';
+                // show deleted time as mtime
+                if (fileData.mtime) {
+                    fileData.mtime = parseInt(fileData.mtime, 10);
+                }
+                if (!dirListing) {
+                    fileData.displayName = fileData.name;
+                    //fileData.name = fileData.name + '.d' + Math.floor(fileData.mtime / 1000);
+                    fileData.name = fileData.name + '.' + fileData['eos.restore-key'];
+                }
+                return OCA.Files.FileList.prototype._renderRow.call(this, fileData, options);
+            },
 
-		setupUploadEvents: function() {
-			// override and do nothing
-		},
+            getAjaxUrl: function(action, params) {
+                var q = '';
+                if (params) {
+                    q = '?' + OC.buildQueryString(params);
+                }
+                return OC.filePath('files_eostrashbin', 'ajax', action + '.php') + q;
+            },
 
-		linkTo: function(dir){
-			return OC.linkTo('files', 'index.php')+"?view=eostrashbin&dir="+ encodeURIComponent(dir).replace(/%2F/g, '/');
-		},
+            setupUploadEvents: function() {
+                // override and do nothing
+            },
 
-		elementToFile: function($el) {
-			var fileInfo = OCA.Files.FileList.prototype.elementToFile($el);
-			if (this.getCurrentDirectory() === '/') {
-				fileInfo.displayName = getDeletedFileName(fileInfo.name);
-			}
-			// no size available
-			//delete fileInfo.size;
-			fileInfo['data-eos-restore-path'] = $el.attr('data-eos-restore-path');
-			return fileInfo;
-		},
+            linkTo: function(dir) {
+                return OC.linkTo('files', 'index.php') + "?view=eostrashbin&dir=" + encodeURIComponent(dir).replace(/%2F/g, '/');
+            },
 
-		updateEmptyContent: function(){
-			var exists = this.$fileList.find('tr:first').exists();
-			this.$el.find('#emptycontent').toggleClass('hidden', exists);
-			this.$el.find('#filestable th').toggleClass('hidden', !exists);
-		},
+            elementToFile: function($el) {
+                var fileInfo = OCA.Files.FileList.prototype.elementToFile($el);
+                if (this.getCurrentDirectory() === '/') {
+                    fileInfo.displayName = getDeletedFileName(fileInfo.name);
+                }
+                // no size available
+                //delete fileInfo.size;
+                fileInfo['data-eos-restore-path'] = $el.attr('data-eos-restore-path');
+                return fileInfo;
+            },
 
-		_removeCallback: function(result) {
-			if (result.status !== 'success') {
-				OC.dialogs.alert(result.data.message, t('files_eostrashbin', 'Error'));
-			}
+            updateEmptyContent: function() {
+                var exists = this.$fileList.find('tr:first').exists();
+                this.$el.find('#emptycontent').toggleClass('hidden', exists);
+                this.$el.find('#filestable th').toggleClass('hidden', !exists);
+            },
 
-			var files = result.data.success;
-			var $el;
-			for (var i = 0; i < files.length; i++) {
-				$el = this.remove(OC.basename(files[i].filename), {updateSummary: false});
-				this.fileSummary.remove({type: $el.attr('data-type'), size: $el.attr('data-size')});
-			}
-			this.fileSummary.update();
-			this.updateEmptyContent();
-			this.enableActions();
-		},
+            _removeCallback: function(result) {
+                if (result.status !== 'success') {
+                    OC.dialogs.alert(result.data.message, t('files_eostrashbin', 'Error'));
+                }
 
-		_onClickRestoreSelected: function(event) {
-			event.preventDefault();
-			var self = this;
-			var allFiles = this.$el.find('.select-all').is(':checked');
-			var files = [];
-			var params = {};
-			this.disableActions();
-			if (allFiles) {
-				this.showMask();
-				params = {
-					allfiles: true,
-					dir: this.getCurrentDirectory()
-				};
-			}
-			else {
-				files = _.pluck(this.getSelectedFiles(), 'name');
-				for (var i = 0; i < files.length; i++) {
-					var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
-					deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
-				}
-				params = {
-					files: JSON.stringify(files),
-					dir: this.getCurrentDirectory()
-				};
-			}
+                var files = result.data.success;
+                var $el;
+                for (var i = 0; i < files.length; i++) {
+                    $el = this.remove(OC.basename(files[i].filename), { updateSummary: false });
+                    this.fileSummary.remove({ type: $el.attr('data-type'), size: $el.attr('data-size') });
+                }
+                this.fileSummary.update();
+                this.updateEmptyContent();
+                this.enableActions();
+            },
 
-			$.post(OC.filePath('files_eostrashbin', 'ajax', 'undelete.php'),
-				params,
-				function(result) {
-					if (allFiles) {
-						if (result.status !== 'success') {
-							OC.dialogs.alert(result.data.message, t('files_eostrashbin', 'Error'));
-						}
-						self.hideMask();
-						// simply remove all files
-						self.setFiles([]);
-						self.enableActions();
-					}
-					else {
-						self._removeCallback(result);
-					}
-				}
-			);
-		},
+            _onClickRestoreSelected: function(event) {
+                event.preventDefault();
+                var self = this;
+                var allFiles = this.$el.find('.select-all').is(':checked');
+                var files = [];
+                var params = {};
+                this.disableActions();
+                if (allFiles) {
+                    this.showMask();
+                    params = {
+                        allfiles: true,
+                        dir: this.getCurrentDirectory()
+                    };
+                } else {
+                    files = _.pluck(this.getSelectedFiles(), 'name');
+                    for (var i = 0; i < files.length; i++) {
+                        var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
+                        deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
+                    }
+                    params = {
+                        files: JSON.stringify(files),
+                        dir: this.getCurrentDirectory()
+                    };
+                }
 
-		_onClickDeleteSelected: function(event) {
-			event.preventDefault();
-			var self = this;
-			var allFiles = this.$el.find('.select-all').is(':checked');
-			var files = [];
-			var params = {};
-			if (allFiles) {
-				params = {
-					allfiles: true,
-					dir: this.getCurrentDirectory()
-				};
-			}
-			else {
-				files = _.pluck(this.getSelectedFiles(), 'name');
-				params = {
-					files: JSON.stringify(files),
-					dir: this.getCurrentDirectory()
-				};
-			}
+                $.post(OC.filePath('files_eostrashbin', 'ajax', 'undelete.php'),
+                    params,
+                    function(result) {
+                        if (allFiles) {
+                            if (result.status !== 'success') {
+                                OC.dialogs.alert(result.data.message, t('files_eostrashbin', 'Error'));
+                            }
+                            self.hideMask();
+                            // simply remove all files
+                            self.setFiles([]);
+                            self.enableActions();
+                        } else {
+                            self._removeCallback(result);
+                        }
+                    }
+                );
+            },
 
-			this.disableActions();
-			if (allFiles) {
-				this.showMask();
-			}
-			else {
-				for (var i = 0; i < files.length; i++) {
-					var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
-					deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
-				}
-			}
+            _onClickDeleteSelected: function(event) {
+                event.preventDefault();
+                var self = this;
+                var allFiles = this.$el.find('.select-all').is(':checked');
+                var files = [];
+                var params = {};
+                if (allFiles) {
+                    params = {
+                        allfiles: true,
+                        dir: this.getCurrentDirectory()
+                    };
+                } else {
+                    files = _.pluck(this.getSelectedFiles(), 'name');
+                    params = {
+                        files: JSON.stringify(files),
+                        dir: this.getCurrentDirectory()
+                    };
+                }
 
-			$.post(OC.filePath('files_eostrashbin', 'ajax', 'delete.php'),
-					params,
-					function(result) {
-						if (allFiles) {
-							if (result.status !== 'success') {
-								OC.dialogs.alert(result.data.message, t('files_eostrashbin', 'Error'));
-							}
-							self.hideMask();
-							// simply remove all files
-							self.setFiles([]);
-							self.enableActions();
-						}
-						else {
-							self._removeCallback(result);
-						}
-					}
-			);
-		},
+                this.disableActions();
+                if (allFiles) {
+                    this.showMask();
+                } else {
+                    for (var i = 0; i < files.length; i++) {
+                        var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
+                        deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
+                    }
+                }
 
-		_onClickFile: function(event) {
-			var mime = $(this).parent().parent().data('mime');
-			if (mime !== 'httpd/unix-directory') {
-				event.preventDefault();
-			}
-			return OCA.Files.FileList.prototype._onClickFile.apply(this, arguments);
-		},
+                $.post(OC.filePath('files_eostrashbin', 'ajax', 'delete.php'),
+                    params,
+                    function(result) {
+                        if (allFiles) {
+                            if (result.status !== 'success') {
+                                OC.dialogs.alert(result.data.message, t('files_eostrashbin', 'Error'));
+                            }
+                            self.hideMask();
+                            // simply remove all files
+                            self.setFiles([]);
+                            self.enableActions();
+                        } else {
+                            self._removeCallback(result);
+                        }
+                    }
+                );
+            },
 
-		generatePreviewUrl: function(urlSpec) {
-			return OC.generateUrl('/apps/files_eostrashbin/ajax/preview.php?') + $.param(urlSpec);
-		},
+            _onClickFile: function(event) {
+                var mime = $(this).parent().parent().data('mime');
+                if (mime !== 'httpd/unix-directory') {
+                    event.preventDefault();
+                }
+                return OCA.Files.FileList.prototype._onClickFile.apply(this, arguments);
+            },
 
-		getDownloadUrl: function() {
-			// no downloads
-			return '#';
-		},
+            generatePreviewUrl: function(urlSpec) {
+                return OC.generateUrl('/apps/files_eostrashbin/ajax/preview.php?') + $.param(urlSpec);
+            },
 
-		enableActions: function() {
-			this.$el.find('.action').css('display', 'inline');
-			this.$el.find('input:checkbox').removeClass('u-hidden');
-		},
+            getDownloadUrl: function() {
+                // no downloads
+                return '#';
+            },
 
-		disableActions: function() {
-			this.$el.find('.action').css('display', 'none');
-			this.$el.find('input:checkbox').addClass('u-hidden');
-		},
+            enableActions: function() {
+                this.$el.find('.action').css('display', 'inline');
+                this.$el.find('input:checkbox').removeClass('u-hidden');
+            },
 
-		updateStorageStatistics: function() {
-			// no op because the trashbin doesn't have
-			// storage info like free space / used space
-		},
+            disableActions: function() {
+                this.$el.find('.action').css('display', 'none');
+                this.$el.find('input:checkbox').addClass('u-hidden');
+            },
 
-		isSelectedDeletable: function() {
-			return false;
-		},
+            updateStorageStatistics: function() {
+                // no op because the trashbin doesn't have
+                // storage info like free space / used space
+            },
 
-		/**
-		 * Reloads the file list using ajax call
-		 *
-		 * @return ajax call object
-		 */
-		reload: function() {
-			this._selectedFiles = {};
-			this._selectionSummary.clear();
-			this.$el.find('.select-all').prop('checked', false);
-			this.showMask();
-			if (this._reloadCall) {
-				this._reloadCall.abort();
-			}
-			this._reloadCall = $.ajax({
-				url: this.getAjaxUrl('list'),
-				data: {
-					dir : this.getCurrentDirectory(),
-					sort: this._sort,
-					sortdirection: this._sortDirection
-				}
-			});
-			var callBack = this.reloadCallback.bind(this);
-			return this._reloadCall.then(callBack, callBack);
-		},
-		reloadCallback: function(result) {
-			delete this._reloadCall;
-			this.hideMask();
+            isSelectedDeletable: function() {
+                return true;
+            },
 
-			if (!result || result.status === 'error') {
-				// if the error is not related to folder we're trying to load, reload the page to handle logout etc
-				if (result.data.error === 'authentication_error' ||
-					result.data.error === 'token_expired' ||
-					result.data.error === 'application_not_enabled'
-				) {
-					OC.redirect(OC.generateUrl('apps/files'));
-				}
-				OC.Notification.show(result.data.message);
-				return false;
-			}
+            /**
+             * Reloads the file list using ajax call
+             *
+             * @return ajax call object
+             */
+            reload: function() {
+                this._selectedFiles = {};
+                this._selectionSummary.clear();
+                this.$el.find('.select-all').prop('checked', false);
+                this.showMask();
+                if (this._reloadCall) {
+                    this._reloadCall.abort();
+                }
+                this._reloadCall = $.ajax({
+                    url: this.getAjaxUrl('list'),
+                    data: {
+                        dir: this.getCurrentDirectory(),
+                        sort: this._sort,
+                        sortdirection: this._sortDirection,
+                        from: $("#cb_cal_input1").val(),
+                        to: $("#cb_cal_input2").val()
+                    }
+                });
+                var callBack = this.reloadCallback.bind(this);
+                return this._reloadCall.then(callBack, callBack);
+            },
+            reloadCallback: function(result) {
+                delete this._reloadCall;
+                this.hideMask();
 
-			if (result.status === 401) {
-				return false;
-			}
+                if (!result || result.status === 'error') {
+                    // if the error is not related to folder we're trying to load, reload the page to handle logout etc
+                    if (result.data.error === 'authentication_error' ||
+                        result.data.error === 'token_expired' ||
+                        result.data.error === 'application_not_enabled'
+                    ) {
+                        OC.redirect(OC.generateUrl('apps/files'));
+                    }
+                    OC.Notification.show(result.data.message);
+                    return false;
+                }
 
-			// Firewall Blocked request?
-			if (result.status === 403) {
-				// Go home
-				this.changeDirectory('/');
-				OC.Notification.show(t('files', 'This operation is forbidden'));
-				return false;
-			}
+                if (result.status === 401) {
+                    return false;
+                }
 
-			// Did share service die or something else fail?
-			if (result.status === 500) {
-				// Go home
-				this.changeDirectory('/');
-				OC.Notification.show(t('files', 'This directory is unavailable, please check the logs or contact the administrator'));
-				return false;
-			}
+                // Firewall Blocked request?
+                if (result.status === 403) {
+                    // Go home
+                    this.changeDirectory('/');
+                    OC.Notification.show(t('files', 'This operation is forbidden'));
+                    return false;
+                }
 
-			if (result.status === 404) {
-				// go back home
-				this.changeDirectory('/');
-				return false;
-			}
-			// aborted ?
-			if (result.status === 0){
-				return true;
-			}
+                // Did share service die or something else fail?
+                if (result.status === 500) {
+                    // Go home
+                    this.changeDirectory('/');
+                    OC.Notification.show(t('files', 'This directory is unavailable, please check the logs or contact the administrator'));
+                    return false;
+                }
 
-			this.setFiles(result.data.files);
-			return true;
-		},
+                if (result.status === 404) {
+                    // go back home
+                    this.changeDirectory('/');
+                    return false;
+                }
+                // aborted ?
+                if (result.status === 0) {
+                    return true;
+                }
 
-	});
+                this.setFiles(result.data.files);
+                return true;
+            },
 
-	OCA.EosTrashbin.FileList = FileList;
+        });
+
+    OCA.EosTrashbin.FileList = FileList;
 })();
-
