@@ -9,7 +9,7 @@
  */
 
 .nav-icon-eostrashbin {
-	background-image: url('../../files/img/delete.svg');
+    background-image: url('../../files/img/delete.svg');
 }
 
 /*
@@ -42,3 +42,50 @@ nav-eostrashbin {
 }
 */
 
+#app-content-eostrashbin .actions .new {
+    display: none;
+}
+
+#app-content-eostrashbin #fileList tr td.filename>.selectCheckBox+label:before {
+    display: none;
+}
+
+#app-content-eostrashbin .breadcrumb {
+    display: none
+}
+
+.cb-highlight .ui-state-default {
+    background: #1d2d44;
+    color: #FFF;
+}
+
+.cb_cal_form_wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.cb_cal_form {
+    visibility: hidden;
+    width: 0;
+    position: absolute;
+}
+
+.cb_cal_from:before {
+    content: "Pick a date interval (from)";
+    font-size: 0.8em;
+    padding-bottom: 5px;
+    text-align: center;
+    width: 100%;
+}
+
+.cb_cal_to:before {
+    content: "Pick a date interval (to) [limit 7 days]";
+    font-size: 0.8em;
+    padding-bottom: 5px;
+    text-align: center;
+    width: 100%;
+}
+
+#ui-datepicker-div {
+    z-index: 100 !important;
+}

@@ -8,4 +8,5 @@ OCP\Util::addStyle('files_eostrashbin', 'trash');
 OCP\Util::addScript('files_eostrashbin', 'app');
 OCP\Util::addScript('files_eostrashbin', 'filelist');
 OCP\Util::addScript('files_eostrashbin', 'restorepathview');
+OCP\Util::addScript('files_eostrashbin', 'datepicker');
 $tmpl->printPage();
