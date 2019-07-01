@@ -86,6 +86,6 @@ nav-eostrashbin {
     width: 100%;
 }
 
-#ui-datepicker-div {
+.cb_cal_from, .cb_cal_to {
     z-index: 100 !important;
 }

@@ -66,9 +66,9 @@ $(document).ready(function() {
             onClose: function(dateText, inst) {
                 if (this.date_changed) {
                     $(cb_cal_input2).datepicker("show");
-                    $(inst.dpDiv).removeClass(cb_cal_style1);
                     this.date_changed = false;
                 }
+                $(inst.dpDiv).removeClass(cb_cal_style1);
             },
             onSelect: function(dateText, inst) {
                 $(cb_cal_input2).val("");
